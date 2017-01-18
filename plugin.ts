@@ -81,7 +81,6 @@ export class ExternalModuleNamePlugin extends ConverterComponent
     }
 
     CommentPlugin.removeTags(reflection.comment, 'module');
-    CommentPlugin.removeTags(reflection.comment, 'preferred');
   }
 
 
@@ -121,8 +120,15 @@ export class ExternalModuleNamePlugin extends ConverterComponent
 
       // If @preferred was found on the current item, update the mergeTarget's comment
       // with comment from the renaming module
-      if (item.preferred)
+      if (item.preferred) {
+        let commentTags = renaming.comment.tags.filter((item) => { return item.tagName == 'preferred'});
+        
+        if (commentTags.length > 0) {
+          renaming.comment.text = commentTags[0].text;
+        }
+
         mergeTarget.comment = renaming.comment;
+      }
 
       // Now that all the children have been relocated to the mergeTarget, delete the empty module
       // Make sure the module being renamed doesn't have children, or they will be deleted
